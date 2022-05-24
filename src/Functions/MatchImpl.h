@@ -177,7 +177,7 @@ struct MatchImpl
                 if (!regexp->getRE2()) /// An empty regexp. Always matches.
                 {
                     if (haystack_size)
-                        memset(res.data(), 1, haystack_size * sizeof(res[0]));
+                        memset(res.data(), !negate, haystack_size * sizeof(res[0]));
                 }
                 else
                 {
@@ -336,7 +336,7 @@ struct MatchImpl
                 if (!regexp->getRE2()) /// An empty regexp. Always matches.
                 {
                     if (haystack_size)
-                        memset(res.data(), 1, haystack_size * sizeof(res[0]));
+                        memset(res.data(), !negate, haystack_size * sizeof(res[0]));
                 }
                 else
                 {
@@ -488,7 +488,7 @@ struct MatchImpl
                 {
                     if (!regexp.getRE2()) /// An empty regexp. Always matches.
                     {
-                        res[i] = 1;
+                        res[i] = !negate;
                     }
                     else
                     {
@@ -602,7 +602,7 @@ struct MatchImpl
                 {
                     if (!regexp.getRE2()) /// An empty regexp. Always matches.
                     {
-                        res[i] = 1;
+                        res[i] = !negate;
                     }
                     else
                     {
