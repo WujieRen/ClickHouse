@@ -182,14 +182,14 @@ struct MatchImpl
                     size_t prev_offset = 0;
                     for (size_t i = 0; i < haystack_size; ++i)
                     {
-                        res[i] = negate
-                            ^ regexp->getRE2()->Match(
-                                  {reinterpret_cast<const char *>(&haystack_data[prev_offset]), haystack_offsets[i] - prev_offset - 1},
-                                  0,
-                                  haystack_offsets[i] - prev_offset - 1,
-                                  re2_st::RE2::UNANCHORED,
-                                  nullptr,
-                                  0);
+                        const bool match = regexp->getRE2()->Match(
+                                {reinterpret_cast<const char *>(&haystack_data[prev_offset]), haystack_offsets[i] - prev_offset - 1},
+                                0,
+                                haystack_offsets[i] - prev_offset - 1,
+                                re2_st::RE2::UNANCHORED,
+                                nullptr,
+                                0);
+                        res[i] = negate ^ match;
 
                         prev_offset = haystack_offsets[i];
                     }
@@ -237,14 +237,14 @@ struct MatchImpl
                             const size_t start_pos = (required_substring_is_prefix) ? (reinterpret_cast<const char *>(pos) - str_data) : 0;
                             const size_t end_pos = str_size;
 
-                            res[i] = negate
-                                ^ regexp->getRE2()->Match(
-                                      {str_data, str_size},
-                                      start_pos,
-                                      end_pos,
-                                      re2_st::RE2::UNANCHORED,
-                                      nullptr,
-                                      0);
+                            const bool match = regexp->getRE2()->Match(
+                                    {str_data, str_size},
+                                    start_pos,
+                                    end_pos,
+                                    re2_st::RE2::UNANCHORED,
+                                    nullptr,
+                                    0);
+                            res[i] = negate ^ match;
                         }
                     }
                     else
@@ -338,14 +338,14 @@ struct MatchImpl
                     size_t offset = 0;
                     for (size_t i = 0; i < haystack_size; ++i)
                     {
-                        res[i] = negate
-                            ^ regexp->getRE2()->Match(
-                                  {reinterpret_cast<const char *>(&haystack[offset]), N},
-                                  0,
-                                  N,
-                                  re2_st::RE2::UNANCHORED,
-                                  nullptr,
-                                  0);
+                        const bool match = regexp->getRE2()->Match(
+                                {reinterpret_cast<const char *>(&haystack[offset]), N},
+                                0,
+                                N,
+                                re2_st::RE2::UNANCHORED,
+                                nullptr,
+                                0);
+                        res[i] = negate ^ match;
 
                         offset += N;
                     }
@@ -396,14 +396,14 @@ struct MatchImpl
                                 const size_t start_pos = (required_substring_is_prefix) ? (reinterpret_cast<const char *>(pos) - str_data) : 0;
                                 const size_t end_pos = N;
 
-                                res[i] = negate
-                                    ^ regexp->getRE2()->Match(
+                                const bool match = regexp->getRE2()->Match(
                                         {str_data, N},
                                         start_pos,
                                         end_pos,
                                         re2_st::RE2::UNANCHORED,
                                         nullptr,
                                         0);
+                                res[i] = negate ^ match;
                             }
                         }
                         else
@@ -469,8 +469,7 @@ struct MatchImpl
                 {
                     Searcher searcher(required_substr.data(), required_substr.size(), cur_haystack_length);
                     const auto * match = searcher.search(cur_haystack_data, cur_haystack_length);
-                    res[i] = negate
-                        ^ (match != cur_haystack_data + cur_haystack_length);
+                    res[i] = negate ^ (match != cur_haystack_data + cur_haystack_length);
                 }
             }
             else
@@ -490,14 +489,14 @@ struct MatchImpl
                     }
                     else
                     {
-                        res[i] = negate
-                            ^ regexp.getRE2()->Match(
-                                          {reinterpret_cast<const char *>(cur_haystack_data), cur_haystack_length},
-                                          0,
-                                          cur_haystack_length,
-                                          re2_st::RE2::UNANCHORED,
-                                          nullptr,
-                                          0);
+                        const bool match = regexp.getRE2()->Match(
+                                {reinterpret_cast<const char *>(cur_haystack_data), cur_haystack_length},
+                                0,
+                                cur_haystack_length,
+                                re2_st::RE2::UNANCHORED,
+                                nullptr,
+                                0);
+                        res[i] = negate ^ match;
                     }
                 }
                 else
@@ -520,14 +519,14 @@ struct MatchImpl
                             const size_t start_pos = (required_substring_is_prefix) ? (match - cur_haystack_data) : 0;
                             const size_t end_pos = cur_haystack_length;
 
-                            res[i] = negate
-                                ^ regexp.getRE2()->Match(
-                                              {reinterpret_cast<const char *>(cur_haystack_data), cur_haystack_length},
-                                              start_pos,
-                                              end_pos,
-                                              re2_st::RE2::UNANCHORED,
-                                              nullptr,
-                                              0);
+                            const bool match2 = regexp.getRE2()->Match(
+                                    {reinterpret_cast<const char *>(cur_haystack_data), cur_haystack_length},
+                                    start_pos,
+                                    end_pos,
+                                    re2_st::RE2::UNANCHORED,
+                                    nullptr,
+                                    0);
+                            res[i] = negate ^ match2;
                         }
                     }
                 }
@@ -586,8 +585,7 @@ struct MatchImpl
                 {
                     Searcher searcher(required_substr.data(), required_substr.size(), cur_haystack_length);
                     const auto * match = searcher.search(cur_haystack_data, cur_haystack_length);
-                    res[i] = negate
-                        ^ (match != cur_haystack_data + cur_haystack_length);
+                    res[i] = negate ^ (match != cur_haystack_data + cur_haystack_length);
                 }
             }
             else
@@ -607,14 +605,14 @@ struct MatchImpl
                     }
                     else
                     {
-                        res[i] = negate
-                            ^ regexp.getRE2()->Match(
-                                            {reinterpret_cast<const char *>(cur_haystack_data), cur_haystack_length},
-                                            0,
-                                            cur_haystack_length,
-                                            re2_st::RE2::UNANCHORED,
-                                            nullptr,
-                                            0);
+                        const bool match = regexp.getRE2()->Match(
+                                {reinterpret_cast<const char *>(cur_haystack_data), cur_haystack_length},
+                                0,
+                                cur_haystack_length,
+                                re2_st::RE2::UNANCHORED,
+                                nullptr,
+                                0);
+                        res[i] = negate ^ match;
                     }
                 }
                 else
@@ -637,14 +635,14 @@ struct MatchImpl
                             const size_t start_pos = (required_substring_is_prefix) ? (match - cur_haystack_data) : 0;
                             const size_t end_pos = cur_haystack_length;
 
-                            res[i] = negate
-                                ^ regexp.getRE2()->Match(
-                                        {reinterpret_cast<const char *>(cur_haystack_data), cur_haystack_length},
-                                        start_pos,
-                                        end_pos,
-                                        re2_st::RE2::UNANCHORED,
-                                        nullptr,
-                                        0);
+                            const bool match2 = regexp.getRE2()->Match(
+                                    {reinterpret_cast<const char *>(cur_haystack_data), cur_haystack_length},
+                                    start_pos,
+                                    end_pos,
+                                    re2_st::RE2::UNANCHORED,
+                                    nullptr,
+                                    0);
+                            res[i] = negate ^ match2;
                         }
                     }
                 }
